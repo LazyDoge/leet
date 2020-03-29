@@ -23,6 +23,26 @@ class AddTwoNumbersTest {
         l2.next = new ListNode(6);
         l2.next.next = new ListNode(4);
 
+        testAndPrintMethod(l1, l2);
+
+    }
+
+
+    /*
+    [1]
+    [9,9]
+     */
+    @Test
+    void setAddTwoNumbers2() {
+        ListNode l1 = new ListNode(1);
+
+        ListNode l2 = new ListNode(9);
+        l2.next = new ListNode(9);
+
+        testAndPrintMethod(l1, l2);
+    }
+
+    private void testAndPrintMethod(ListNode l1, ListNode l2) {
         ListNode listNode = addTwoNumbers.addTwoNumbers(l1, l2);
 
         while (listNode.next != null) {
@@ -30,6 +50,6 @@ class AddTwoNumbersTest {
             listNode = listNode.next;
         }
         System.out.println("listNode.val = " + listNode.val);
-
     }
+
 }
