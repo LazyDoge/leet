@@ -43,9 +43,11 @@ public class MedianOfTwoSortedArrays {
             shorter = nums1;
             longer = nums2;
         }
-        int shorterPointer = shorter.length / 2;
+        int shorterPointer = (shorter.length - 1) / 2;
+        medianElement.setMedianElementBorders(shorterPointer);
 
-        getNewShorterPointer(shorterPointer, (halfLength + 1) / 2, false);
+        getNewShorterPointer(shorterPointer, (shorter.length + 1) / 2, false);
+        medianElement.setMedianElementBorders(pointer);
 
         return findMedian();
     }
@@ -66,9 +68,22 @@ public class MedianOfTwoSortedArrays {
         } else {
             int newDistance = (distance + 1) / 2;
             if (medianElement.getShorterLeft() > medianElement.getLongerRight()) {
-                getNewShorterPointer(shorterPointer - distance, newDistance, false);
+                int shorterPointerToTheLeft = shorterPointer - newDistance;
+                if (shorterPointerToTheLeft < 0) {
+                    pointer = -1;
+                    return;
+                }
+
+                getNewShorterPointer(shorterPointerToTheLeft, newDistance, false);
             } else if (medianElement.getLongerLeft() > medianElement.getShorterRight()) {
-                getNewShorterPointer(shorterPointer + distance, newDistance, true);
+
+                int shorterPointerToTheRight = shorterPointer + newDistance;
+                if (shorterPointerToTheRight >= shorter.length) {
+                    pointer = shorter.length - 1;
+                    return;
+                }
+
+                getNewShorterPointer(shorterPointerToTheRight, newDistance, true);
             }
         }
 
@@ -76,19 +91,20 @@ public class MedianOfTwoSortedArrays {
     }
 
     private boolean checkSplit(int shorterPointer) {
-        if (shorterPointer == 0 || shorterPointer == shorter.length - 1) {
-            return true;
-        }
-        int longerPointer = halfLength - shorterPointer - 1;
-        //TODO dont create new object for nothing
-        medianElement.setMedianElementBorders(shorterPointer, longerPointer);
-        return medianElement.getShorterLeft() <= medianElement.getLongerRight()
+        medianElement.setMedianElementBorders(shorterPointer);
+        boolean isFonded = medianElement.getShorterLeft() <= medianElement.getLongerRight()
                 && medianElement.getLongerLeft() <= medianElement.getShorterRight();
+        return isFonded;
 
     }
 
-    private double getMedianOfArray(int[] nums2) {
-        return 0;
+    private double getMedianOfArray(int[] single) {
+        int left = (single.length - 1) / 2;
+        if (single.length % 2 == 0) {
+            return ((double) (single[left] + single[left + 1])) / 2;
+        } else {
+            return single[left];
+        }
     }
 
     private static class MedianElement {
@@ -113,11 +129,28 @@ public class MedianOfTwoSortedArrays {
             return longerRight;
         }
 
-        public void setMedianElementBorders(int shorterPointer, int longerPointer) {
-            shorterLeft = shorter[shorterPointer];
-            shorterRight = shorter[shorterPointer + 1];
-            longerLeft = longer[longerPointer];
-            longerRight = longer[longerPointer + 1];
+        public void setMedianElementBorders(int shorterPointer) {
+            int longerPointer = halfLength - shorterPointer - 2;
+            if (shorterPointer < 0) {
+                shorterLeft = Integer.MIN_VALUE;
+            } else {
+                shorterLeft = shorter[shorterPointer];
+            }
+            if (shorterPointer + 1 >= shorter.length) {
+                shorterRight = Integer.MAX_VALUE;
+            } else {
+                shorterRight = shorter[shorterPointer + 1];
+            }
+            if (longerPointer < 0) {
+                longerLeft = Integer.MIN_VALUE;
+            } else {
+                longerLeft = longer[longerPointer];
+            }
+            if (longerPointer + 1 >= longer.length) {
+                longerRight = Integer.MAX_VALUE;
+            } else {
+                longerRight = longer[longerPointer + 1];
+            }
         }
     }
 }
