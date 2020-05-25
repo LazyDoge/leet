@@ -1,6 +1,11 @@
 package edu.sky.problems;
 
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * The string "PAYPALISHIRING" is written in a zigzag pattern on a given number of rows like this: (you may want to display this pattern in a fixed font for better legibility)
  *
@@ -29,35 +34,32 @@ package edu.sky.problems;
  */
 public class ZigZagConversion {
     public String convert(String s, int numRows) {
-        if (numRows == 0 || numRows == 1) {
+        if (numRows == 0 || numRows == 1 || numRows > s.length() || s.length() <= 1) {
             return s;
         }
 
-        //TODO instead of using 2 dimensional array can be used array of strings
-        char[][] chars = new char[numRows][s.length()];
-        int x = 0;
-        int y = 0;
+        List<List<Character>> list = new ArrayList<>(numRows);
+        for (int i = 0; i < numRows; i++) {
+            list.add(new ArrayList<>());
+        }
+
+        int rowNumber = 0;
         char[] charArray = s.toCharArray();
         for (int j = 0; j < charArray.length;) {
             for (int i = 0; i < numRows; i++) {
                 if (j >= charArray.length) {
                     break;
                 }
-                chars[y + i][x] = charArray[j++];
+                list.get(rowNumber + i).add(charArray[j++]);
             }
-            y = numRows - 2;
-            for (; y > 0; y--) {
+            rowNumber = numRows - 2;
+            for (; rowNumber > 0; rowNumber--) {
                 if (j >= charArray.length) {
                     break;
                 }
-                chars[y][++x] = charArray[j++];
+                list.get(rowNumber).add(charArray[j++]);
             }
-            x++;
         }
-        StringBuilder stringBuilder = new StringBuilder();
-        for (char[] aChar : chars) {
-            stringBuilder.append(new String(aChar).replace('\0', '?').replace("?", ""));
-        }
-        return stringBuilder.toString();
+        return list.stream().flatMap(Collection::stream).map(Object::toString).collect(Collectors.joining());
     }
 }
